@@ -16,7 +16,8 @@ jobs:
         args: --force cargo-web
     - uses: actions-rs/cargo@v1
       with:
-        command: web deploy
+        command: web
+        args: deploy
     - uses: peaceiris/actions-gh-pages@v2.4.0
       env:
         PERSONAL_TOKEN: ${{ secrets.PERSONAL_TOKEN }}
