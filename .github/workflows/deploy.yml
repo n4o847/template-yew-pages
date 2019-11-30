@@ -12,8 +12,8 @@ jobs:
     - uses: actions/checkout@v1
     - uses: actions-rs/cargo@v1
       with:
-        command: install cargo-web
-        args: --force
+        command: install
+        args: --force cargo-web
     - uses: actions-rs/cargo@v1
       with:
         command: web deploy
