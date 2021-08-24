@@ -23,6 +23,11 @@ jobs:
           target/
         key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
+    - uses: actions-rs/cargo@v1
+      with:
+        command: install
+        args: --force trunk
+
     - run: |
         cargo install trunk
 
