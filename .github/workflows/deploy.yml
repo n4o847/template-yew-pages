@@ -28,9 +28,8 @@ jobs:
         command: install
         args: trunk
 
-    - uses: actions-rs/toolchain@v1
-      with:
-        target: wasm32-unknown-unknown
+    - run: |
+        rustup target add wasm32-unknown-unknown
 
     - run: |
         trunk build
