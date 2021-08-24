@@ -5,4 +5,4 @@ authors = ["n4o847"]
 edition = "2018"
 
 [dependencies]
-yew = "0.10.0"
+yew = "0.18"

@@ -1,42 +1,52 @@
-use yew::{html, Component, ComponentLink, Html, ShouldRender};
-
-struct App {
-    clicked: bool,
-}
+use yew::prelude::*;
 
 enum Msg {
-    Click,
+    AddOne,
 }
 
-impl Component for App {
+struct Model {
+    // `ComponentLink` is like a reference to a component.
+    // It can be used to send messages to the component
+    link: ComponentLink<Self>,
+    value: i64,
+}
+
+impl Component for Model {
     type Message = Msg;
     type Properties = ();
 
-    fn create(_: Self::Properties, _: ComponentLink<Self>) -> Self {
-        App { clicked: false }
+    fn create(_props: Self::Properties, link: ComponentLink<Self>) -> Self {
+        Self { link, value: 0 }
     }
 
     fn update(&mut self, msg: Self::Message) -> ShouldRender {
         match msg {
-            Msg::Click => {
-                self.clicked = true;
-                true // Indicate that the Component should re-render
+            Msg::AddOne => {
+                self.value += 1;
+                // the value has changed so we need to
+                // re-render for it to appear on the page
+                true
             }
         }
     }
 
-    fn view(&self) -> Html<Self> {
-        let button_text = if self.clicked {
-            "Clicked!"
-        } else {
-            "Click me!"
-        };
+    fn change(&mut self, _props: Self::Properties) -> ShouldRender {
+        // Should only return "true" if new properties are different to
+        // previously received properties.
+        // This component has no properties so we will always return "false".
+        false
+    }
+
+    fn view(&self) -> Html {
         html! {
-            <button onclick=|_| Msg::Click>{ button_text }</button>
+            <div>
+                <button onclick={self.link.callback(|_| Msg::AddOne)}>{ "+1" }</button>
+                <p>{ self.value }</p>
+            </div>
         }
     }
 }
 
 fn main() {
-    yew::start_app::<App>();
+    yew::start_app::<Model>();
 }
