@@ -1,4 +1,4 @@
-name: deploy
+name: Deploy to GitHub Pages
 
 on:
   push:
@@ -6,20 +6,33 @@ on:
     - master
 
 jobs:
-  build-deploy:
-    runs-on: ubuntu-18.04
+  deploy:
+    runs-on: ubuntu-20.04
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v2
+
+    - uses: actions/cache@v2
+      with:
+        path: |
+          ~/.cargo/bin/
+          ~/.cargo/registry/index/
+          ~/.cargo/registry/cache/
+          ~/.cargo/git/db/
+          target/
+        key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+
     - uses: actions-rs/cargo@v1
       with:
         command: install
-        args: --force cargo-web
-    - uses: actions-rs/cargo@v1
+        args: trunk
+
+    - run: |
+        trunk build
+
+    - uses: peaceiris/actions-gh-pages@v3
+      if: ${{ github.ref == 'refs/heads/main' }}
       with:
-        command: web
-        args: deploy
-    - uses: peaceiris/actions-gh-pages@v2.4.0
-      env:
-        PERSONAL_TOKEN: ${{ secrets.PERSONAL_TOKEN }}
-        PUBLISH_BRANCH: gh-pages
-        PUBLISH_DIR: ./target/deploy
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./dist
